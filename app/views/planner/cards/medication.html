@@ -1,0 +1,43 @@
+{% extends 'templates/planner_card.html' %}
+
+{% block id %}metformin-info-card{% endblock %}
+
+{% block heading %}
+
+<script>
+  $.ajax({
+    type: "GET",
+    url: "https://nhsdev.azure-api.net/epi/medications/metformin",
+    success: function(data) {
+      $('.med-name').append(data.MedicationName);
+      $('.med-size').append(data.MedicationSize);
+      $('.med-list').append(data.MainInformation);
+      $('.med-more').append(data.MoreInformation);
+      $('.med-link').append(data.ReadMoreText);
+      $('.med-link').attr('href', data.ReadMoreLink);
+    }
+  });
+</script>
+
+  Your <span class="med-name"></span> medication
+{% endblock %}
+
+{% block body %}
+  <div class="item-body-content">
+
+    <p>You picked up your last prescription on 19 October 2015</p>
+
+    <p class="lede">You’re on <span class="med-name"></span> (<span class="med-size"></span>mg)</p>
+
+
+    <div class="med-list"></div>
+
+    <details>
+      <summary>More about <span class="med-name"></span></summary>
+      <div>
+        <div class="med-more"></div>
+        <p class="med-link-text"><a class="med-link" href=""></a></p>
+      </div>
+    </details>
+  </div>
+{% endblock %}
