@@ -31,7 +31,7 @@ Install Node.js (see requirements)
 #### Clone this repo
 
 ```
-git clone https://github.com/nhsalpha/nhs_prototype_kit.git
+git clone git@github.com:mcheung-nhs/nhs-alpha-prototypes.git
 
 ```
 
