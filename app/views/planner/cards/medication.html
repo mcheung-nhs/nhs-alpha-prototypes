@@ -1,43 +1,64 @@
-{% extends 'templates/planner_card.html' %}
-
-{% block id %}metformin-info-card{% endblock %}
-
-{% block heading %}
+{% block body %}
+<style>
+  .item-body-collapsed {height:0;}
+  .lowercase {text-transform:lowercase;}
+</style>
 
 <script>
   $.ajax({
     type: "GET",
-    url: "https://nhsdev.azure-api.net/epi/medications/metformin",
+    url: "https://nhsdev.azure-api.net/epi/medications/",
     success: function(data) {
-      $('.med-name').append(data.MedicationName);
-      $('.med-size').append(data.MedicationSize);
-      $('.med-list').append(data.MainInformation);
-      $('.med-more').append(data.MoreInformation);
-      $('.med-link').append(data.ReadMoreText);
-      $('.med-link').attr('href', data.ReadMoreLink);
+      medshtml = "";
+      i = 0;
+      $.each(data, function(k, v) {
+        medshtml = medshtml +
+        '<div class="item item-med" id="' + v.MedicationName + '-info-card">' +
+          '<div class="item-content">' +
+            '<div class="item-header">' +
+              '<span class="item-heading">Your <span class="med-name lowercase">' + v.MedicationName + '</span> medication </span>' +
+              '<a href="#" class="item-collapse-link">Show more</a>' +
+            '</div>' +
+            '<div class="item-body item-body-collapsed">' +
+              '<div class="item-body-content">' +
+                '<p>You picked up your last prescription on 19 October 2015</p>' +
+                '<p class="lede">You’re on <span class="med-name">' +
+                v.MedicationName +
+                '</span> (<span class="med-size">' + v.MedicationSize + '</span>mg)</p>' +
+                '<div class="med-list">' + v.MainInformation + '</div>' +
+                '<details>' +
+                  '<summary class="more-about" role="button" aria-controls="details-content-' + i + '" tabindex="0" aria-expanded="false">More about <span class="med-name">' + v.MedicationName + '</span></summary>' +
+                  '<div id="details-content-' + i + '" aria-hidden="true" style="display:none;">' +
+                    '<div class="med-more">' + v.MoreInformation + '</div>' +
+                    '<p class="med-link-text"><a class="med-link" href="' + v.ReadMoreLink + '">' + v.ReadMoreText + '</a></p>' +
+                  '</div>' +
+                '</details>' +
+              '</div>' +
+              '<div class="item-collapse">' +
+                '<a href="#" class="item-collapse-link" tabindex="0">Show less</a>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="shadow"></div>' +
+        '</div>';
+        i = i + 1;
+      });
+      $('.meds').append(medshtml);
+
+      $('.more-about').on('click', function() {
+        if ($(this).attr('aria-expanded') === 'false') {
+          $(this).attr('aria-expanded', 'true');
+          $(this).next('div').attr('aria-hidden', 'false').show();
+        } else {
+          $(this).attr('aria-expanded', 'false');
+          $(this).next('div').attr('aria-hidden', 'true').hide();
+        }
+
+      });
     }
   });
 </script>
 
-  Your <span class="med-name"></span> medication
-{% endblock %}
+<div class="meds"></div>
 
-{% block body %}
-  <div class="item-body-content">
-
-    <p>You picked up your last prescription on 19 October 2015</p>
-
-    <p class="lede">You’re on <span class="med-name"></span> (<span class="med-size"></span>mg)</p>
-
-
-    <div class="med-list"></div>
-
-    <details>
-      <summary>More about <span class="med-name"></span></summary>
-      <div>
-        <div class="med-more"></div>
-        <p class="med-link-text"><a class="med-link" href=""></a></p>
-      </div>
-    </details>
-  </div>
 {% endblock %}
